@@ -8,6 +8,7 @@ public class AudioManagerController : MonoBehaviour
     [SerializeField] private AudioSource heavyAudioEffects;
     [SerializeField] private AudioSource sandvichinatorAudioEffects;
     [SerializeField] private AudioSource miscAudioEffects;
+    [SerializeField] private AudioSource musicAudio;
 
     [Header("UI Audio")]
     [SerializeField] private AudioClip uiButtonHoverAudio;
@@ -31,6 +32,11 @@ public class AudioManagerController : MonoBehaviour
     [SerializeField] private AudioClip errorAudio;
     [SerializeField] private AudioClip flameEngulfAudio;
     [SerializeField] private AudioClip hitAudio;
+    [SerializeField] private AudioClip drumsAudio;
+
+    [Header("Music Audio")]
+    [SerializeField] private AudioClip teamWonAudio;
+    [SerializeField] private AudioClip teamLostAudio;
 
     private void OnEnable()
     {
@@ -121,8 +127,19 @@ public class AudioManagerController : MonoBehaviour
         heavyAudioEffects.Play();
     }
 
-    private void MatchEndRandomHeavyVoice()
+    private void MatchEndRandomHeavyVoice(int playerScore)
     {
+        if(playerScore <= 0)
+        {
+            SandwichFinishedRandomHeavyVoice(false);
+            musicAudio.clip = teamLostAudio;
+            musicAudio.Play();
+            return;
+        }
+
+        musicAudio.clip = teamWonAudio;
+        musicAudio.Play();
+
         int randomAudio = Random.Range(0, 3);
 
         switch (randomAudio)

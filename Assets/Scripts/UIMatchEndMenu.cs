@@ -35,7 +35,7 @@ public class UIMatchEndMenu : MonoBehaviour
         if (content != null)
         {
             //GameManager.Instance.matchController.MatchCountdownStarted += () => SetMenuActive(false);
-            GameManager.Instance.matchController.MatchEnded += () => SetMenuActive(true);
+            GameManager.Instance.matchController.MatchEnded += (playerScore) => SetMenuActive(true);
 
             GameManager.Instance.matchController.PlayerScoreOnChange += UpdatePlayerScoreText;
             GameManager.Instance.matchController.SandwichMadeAmountOnChange += UpdateSandwichesMadeText;
@@ -48,7 +48,7 @@ public class UIMatchEndMenu : MonoBehaviour
             return;
 
         //GameManager.Instance.matchController.MatchStarted -= () => SetMenuActive(false);
-        GameManager.Instance.matchController.MatchEnded -= () => SetMenuActive(true);
+        GameManager.Instance.matchController.MatchEnded -= (playerScore) => SetMenuActive(true);
 
         GameManager.Instance.matchController.PlayerScoreOnChange -= UpdatePlayerScoreText;
         GameManager.Instance.matchController.SandwichMadeAmountOnChange -= UpdateSandwichesMadeText;
@@ -67,7 +67,7 @@ public class UIMatchEndMenu : MonoBehaviour
 
     private void UpdateSandwichesMadeText(int newValue)
     {
-        sandwichesMadeText.text = "Sandwiches made: " + newValue;
+        sandwichesMadeText.text = "Sandviches made: " + newValue;
     }
 
     public void StartMatchEndingDelay()

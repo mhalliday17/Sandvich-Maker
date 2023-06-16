@@ -75,7 +75,7 @@ public class MatchController : MonoBehaviour
     public event Action<int> SandwichMadeAmountOnChange;
 
     public event Action MatchStarted;
-    public event Action MatchEnded;
+    public event Action<int> MatchEnded;
     public event Action<bool> MatchOnCourseOnChange;
     public event Action<float> MatchTimerOnChange;
     public event Action MatchTimerOnFinish;
@@ -130,7 +130,7 @@ public class MatchController : MonoBehaviour
     private void MatchEnd()
     {
         MatchOnCourse = false;
-        MatchEnded?.Invoke();
+        MatchEnded?.Invoke(playerScore);
     }
 
     private void StartMatchControllerTimer(bool isCountDown)
