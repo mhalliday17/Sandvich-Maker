@@ -12,7 +12,6 @@ public class SandvichinatorController : MonoBehaviour
 
     [SerializeField] private float ingredientSpacingValue;
 
-    [SerializeField] private GameObject breadUp;
     [SerializeField] private List<GameObject> ingredientsList;
 
     [SerializeField] private PlayableDirector animDirector;
@@ -21,10 +20,13 @@ public class SandvichinatorController : MonoBehaviour
 
     private void OnEnable()
     {
-        GameManager.Instance.sandwichBuilderController.SandwichRecipeLoaded += (recipe) => { LoadActionToQueue(() => LoadNewSandvich()); };
-        GameManager.Instance.sandwichBuilderController.SandwichIngredientAdded += (ingredient) => { LoadActionToQueue(() => AddIngredient(ingredient)); };
+        //GameManager.Instance.sandwichBuilderController.SandwichRecipeLoaded += (recipe) => { LoadActionToQueue(() => LoadNewSandvich()); };
+        //GameManager.Instance.sandwichBuilderController.SandwichIngredientAdded += (ingredient) => { LoadActionToQueue(() => AddIngredient(ingredient)); };
 
-        animDirector.stopped += (a) => { CheckQueuedActions(); };
+        GameManager.Instance.sandwichBuilderController.SandwichRecipeLoaded += (recipe) => LoadNewSandvich();
+        GameManager.Instance.sandwichBuilderController.SandwichIngredientAdded += (ingredient) => AddIngredient(ingredient);
+
+        //animDirector.stopped += (a) => { CheckQueuedActions(); };
     }
 
     private void OnDisable()
@@ -32,10 +34,13 @@ public class SandvichinatorController : MonoBehaviour
         if (GameManager.Instance == null)
             return;
 
-        GameManager.Instance.sandwichBuilderController.SandwichRecipeLoaded -= (recipe) => { LoadActionToQueue(() => LoadNewSandvich()); };
-        GameManager.Instance.sandwichBuilderController.SandwichIngredientAdded -= (ingredient) => { LoadActionToQueue(() => AddIngredient(ingredient)); };
+        //GameManager.Instance.sandwichBuilderController.SandwichRecipeLoaded -= (recipe) => { LoadActionToQueue(() => LoadNewSandvich()); };
+        //GameManager.Instance.sandwichBuilderController.SandwichIngredientAdded -= (ingredient) => { LoadActionToQueue(() => AddIngredient(ingredient)); };
 
-        animDirector.stopped -= (a) => { CheckQueuedActions(); };
+        GameManager.Instance.sandwichBuilderController.SandwichRecipeLoaded -= (recipe) => LoadNewSandvich();
+        GameManager.Instance.sandwichBuilderController.SandwichIngredientAdded -= (ingredient) => AddIngredient(ingredient);
+
+        //animDirector.stopped -= (a) => { CheckQueuedActions(); };
     }
 
     private void CheckQueuedActions()
@@ -67,13 +72,7 @@ public class SandvichinatorController : MonoBehaviour
     private void LoadNewSandvich()
     {
         ingredientsCount = 0;
-        breadUp.SetActive(false);
         DisableAllIngredients();
-    }
-
-    private void LoadFinishSandvich()
-    {
-        breadUp.SetActive(true);
     }
 
     private void AddIngredient(IngredientData ingredient)
