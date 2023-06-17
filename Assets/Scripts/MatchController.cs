@@ -16,9 +16,26 @@ public class MatchController : MonoBehaviour
         set
         {
             playerScore = value;
+            CheckHighScore();
             PlayerScoreOnChange?.Invoke(value);
         }
     }
+
+    private int playerHighScore;
+    public int PlayerHighScore
+    {
+        get
+        {
+            return playerHighScore;
+        }
+
+        set
+        {
+            playerHighScore = value;
+            PlayerHighScoreOnChange?.Invoke(value);
+        }
+    }
+
     [SerializeField] int scoreIncreaseAmount = 15;
     [SerializeField] int scoreDecreaseAmount = 10;
 
@@ -33,7 +50,23 @@ public class MatchController : MonoBehaviour
         set
         {
             sandwichesMadeTotalAmount = value;
+            CheckHighScore();
             SandwichMadeAmountOnChange?.Invoke(value);
+        }
+    }
+
+    private int sandwichesHighScore;
+    public int SandwichesHighScore
+    {
+        get
+        {
+            return sandwichesHighScore;
+        }
+
+        set
+        {
+            sandwichesHighScore = value;
+            SandwichesHighScoreOnChange?.Invoke(value);
         }
     }
 
@@ -74,6 +107,11 @@ public class MatchController : MonoBehaviour
     public event Action<int> PlayerScoreOnChange;
     public event Action<int> SandwichMadeAmountOnChange;
 
+    public event Action NewPlayerHighScore;
+    public event Action NewSandwichesHighScore;
+    public event Action <int> PlayerHighScoreOnChange;
+    public event Action <int> SandwichesHighScoreOnChange;
+
     public event Action MatchStarted;
     public event Action<int> MatchEnded;
     public event Action<bool> MatchOnCourseOnChange;
@@ -113,6 +151,7 @@ public class MatchController : MonoBehaviour
         if (MatchOnCourse || MatchCountdownOnCourse) return;
         MatchCountdownStarted?.Invoke();
         MatchCountdownOnCourse = true;
+        LoadHighScore();
         StartMatchControllerTimer(true);
     }
 
@@ -180,5 +219,51 @@ public class MatchController : MonoBehaviour
     private void IncreaseSandwichMadeTotalAmount()
     {
         SandwichesMadeTotalAmount++;
+    }
+
+    private void LoadHighScore()
+    {
+        int[] userHighScoreData = LoadUserHighScoreData();
+        PlayerHighScore = userHighScoreData[0];
+        SandwichesHighScore = userHighScoreData[1];
+    }
+
+    private void CheckHighScore()
+    {
+        if (playerHighScore < playerScore)
+        {
+            SavePlayerHighScoreData();
+            PlayerHighScore = playerScore;
+            NewPlayerHighScore?.Invoke();
+        }
+            
+        if (sandwichesHighScore < sandwichesMadeTotalAmount)
+        {
+            SaveSandwichesHighScoreData();
+            SandwichesHighScore = sandwichesMadeTotalAmount;
+            NewSandwichesHighScore?.Invoke();
+        }
+    }
+
+    private void SavePlayerHighScoreData()
+    {
+        PlayerPrefs.SetInt("MaxScore", playerScore);
+    }
+
+    private void SaveSandwichesHighScoreData()
+    {
+        PlayerPrefs.SetInt("MaxSandwiches", sandwichesMadeTotalAmount);
+    }
+
+    private int[] LoadUserHighScoreData()
+    {
+        int maxPlayerScore = PlayerPrefs.GetInt("MaxScore");
+        int maxSandwiches = PlayerPrefs.GetInt("MaxSandwiches");
+
+        int[] userHighScoreData = new int[2];
+        userHighScoreData[0] = maxPlayerScore;
+        userHighScoreData[1] = maxSandwiches;
+
+        return userHighScoreData;
     }
 }

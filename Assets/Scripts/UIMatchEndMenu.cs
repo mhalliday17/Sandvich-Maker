@@ -13,6 +13,10 @@ public class UIMatchEndMenu : MonoBehaviour
 
     [SerializeField] private TextMeshProUGUI playerScoreText;
     [SerializeField] private TextMeshProUGUI sandwichesMadeText;
+
+    [SerializeField] private TextMeshProUGUI playerHighScoreText;
+    [SerializeField] private TextMeshProUGUI sandwichesHighScoreText;
+
     [SerializeField] private Button restartMatchButton;
 
     [SerializeField] private PlayableDirector animDirector;
@@ -34,11 +38,16 @@ public class UIMatchEndMenu : MonoBehaviour
     {
         if (content != null)
         {
-            //GameManager.Instance.matchController.MatchCountdownStarted += () => SetMenuActive(false);
             GameManager.Instance.matchController.MatchEnded += (playerScore) => SetMenuActive(true);
 
             GameManager.Instance.matchController.PlayerScoreOnChange += UpdatePlayerScoreText;
             GameManager.Instance.matchController.SandwichMadeAmountOnChange += UpdateSandwichesMadeText;
+
+            GameManager.Instance.matchController.PlayerHighScoreOnChange += UpdatePlayerHighScoreText;
+            GameManager.Instance.matchController.SandwichesHighScoreOnChange += UpdateSandwichesHighScoreText;
+
+            GameManager.Instance.matchController.NewPlayerHighScore += () => { playerHighScoreText.color = Color.yellow; };
+            GameManager.Instance.matchController.NewSandwichesHighScore += () => { sandwichesHighScoreText.color = Color.yellow; };
         }
     }
 
@@ -47,16 +56,20 @@ public class UIMatchEndMenu : MonoBehaviour
         if (GameManager.Instance == null)
             return;
 
-        //GameManager.Instance.matchController.MatchStarted -= () => SetMenuActive(false);
         GameManager.Instance.matchController.MatchEnded -= (playerScore) => SetMenuActive(true);
 
         GameManager.Instance.matchController.PlayerScoreOnChange -= UpdatePlayerScoreText;
         GameManager.Instance.matchController.SandwichMadeAmountOnChange -= UpdateSandwichesMadeText;
+
+        GameManager.Instance.matchController.PlayerHighScoreOnChange -= UpdatePlayerHighScoreText;
+        GameManager.Instance.matchController.SandwichesHighScoreOnChange -= UpdateSandwichesHighScoreText;
+
+        GameManager.Instance.matchController.NewPlayerHighScore -= () => { playerHighScoreText.color = Color.yellow; };
+        GameManager.Instance.matchController.NewSandwichesHighScore -= () => { sandwichesHighScoreText.color = Color.yellow; };
     }
 
     private void SetMenuActive(bool setActive)
     {
-        //content.SetActive(setActive);
         if (setActive) StartMatchEndingDelay();
     }
 
@@ -68,6 +81,23 @@ public class UIMatchEndMenu : MonoBehaviour
     private void UpdateSandwichesMadeText(int newValue)
     {
         sandwichesMadeText.text = "Sandviches made: " + newValue;
+    }
+
+    private void UpdatePlayerHighScoreText(int newValue)
+    {
+        playerHighScoreText.text = "Highest score: " + newValue;
+    }
+
+    private void UpdateSandwichesHighScoreText(int newValue)
+    {
+        sandwichesHighScoreText.text = "Most sandviches made: " + newValue;
+    }
+
+    private Color GetColorByHEX(string HEXValue)
+    {
+        Color newColor;
+        ColorUtility.TryParseHtmlString("#"+HEXValue, out newColor);
+        return newColor;
     }
 
     public void StartMatchEndingDelay()
@@ -101,6 +131,8 @@ public class UIMatchEndMenu : MonoBehaviour
     {
         animDirector.Play(restartMatchTimeline);
         yield return new WaitForSeconds((float)animDirector.playableAsset.duration);
+        playerHighScoreText.color = GetColorByHEX("ECE3CB");
+        sandwichesHighScoreText.color = GetColorByHEX("ECE3CB");
         MatchRestartingDelayEnded?.Invoke();
     }
 }
